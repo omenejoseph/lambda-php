@@ -1,0 +1,37 @@
+service: app
+
+provider:
+    name: aws
+    region: us-east-1
+    runtime: provided.al2
+    stackName: test-bref-2
+    iam:
+        # Instruct Serverless to use an existing IAM role for all Lambda functions
+        role: arn:aws:iam::495143188735:role/app-dev-us-east-1-lambdaRole
+
+
+plugins:
+    - ./vendor/bref/bref
+
+resources:
+    Outputs:
+        ServerlessDeploymentBucketName:
+            Value: ServerlessDeploymentBucket
+            Export: 
+                Name: test-bref-2-ServerlessDeploymentBucketName   
+        TestDashbrefDash2LambdaFunctionQualifiedArn:
+            Value: TestDashbrefDash2LambdaVersionVzjiMjGaDisGWzbQEF61sIOTMVns6pCLUBzJsqk
+            Export: 
+                Name: test-bref-2-TestDashbrefDash2LambdaFunctionQualifiedArn           
+
+functions:
+    test-bref-2:
+        handler: index.php
+        description: ''
+        layers:
+            - ${bref:layer.php-81}
+
+# Exclude files from deployment
+package:
+    patterns:
+        - '!tests/**'

@@ -1,0 +1,129 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "ServerlessDeploymentBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "ServerlessDeploymentBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "ServerlessDeploymentBucket"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Effect": "Deny",
+              "Principal": "*",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "ServerlessDeploymentBucket"
+                      },
+                      "/*"
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "ServerlessDeploymentBucket"
+                      }
+                    ]
+                  ]
+                }
+              ],
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": false
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "TestDashbrefDash2LogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/app-dev-test-bref-2"
+      }
+    },
+    "TestDashbrefDash2LambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/app/dev/1665834092876-2022-10-15T11:41:32.876Z/app.zip"
+        },
+        "Handler": "index.php",
+        "Runtime": "provided.al2",
+        "FunctionName": "app-dev-test-bref-2",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Role": "arn:aws:iam::495143188735:role/app-dev-us-east-1-lambdaRole",
+        "Layers": [
+          "arn:aws:lambda:us-east-1:209497400698:layer:php-81:31"
+        ]
+      },
+      "DependsOn": [
+        "TestDashbrefDash2LogGroup"
+      ]
+    },
+    "TestDashbrefDash2LambdaVersionTWcjhdkNiZg31bGDCHdMjSzW1uPWu4lOpt3tywWAe8": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "TestDashbrefDash2LambdaFunction"
+        },
+        "CodeSha256": "zX4CdhNOwxNQlePJGvgIJA+7Xw0jD9hq3r8K5unSWRQ="
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": "ServerlessDeploymentBucket",
+      "Export": {
+        "Name": "test-bref-2-ServerlessDeploymentBucketName"
+      }
+    },
+    "TestDashbrefDash2LambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": "TestDashbrefDash2LambdaVersionVzjiMjGaDisGWzbQEF61sIOTMVns6pCLUBzJsqk",
+      "Export": {
+        "Name": "test-bref-2-TestDashbrefDash2LambdaFunctionQualifiedArn"
+      }
+    }
+  }
+}
